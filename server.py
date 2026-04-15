@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify, session, send_from_directory
 from flask_cors import CORS
 import anthropic
 import requests
@@ -18,7 +18,9 @@ SHOPIFY_STORE_URL = os.environ.get("SHOPIFY_STORE_URL", "bettys-divine.myshopify
 APP_PASSWORD = os.environ.get("APP_PASSWORD", "Bettys1300!")
 
 client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
-
+@app.route("/")
+def index():
+    return send_from_directory(".", "index.html")
 @app.route("/api/login", methods=["POST"])
 def login():
     data = request.json
