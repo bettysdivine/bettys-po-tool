@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Betty's Divine — PO Tool</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #faf8f5;
+      color: #1a1a1a;
+      min-height: 100vh;
+    }
+
+    /* LOGIN */
+    #login-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .login-card {
+      background: white;
+      border-radius: 16px;
+      padding: 3rem 2.5rem;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #b5895a;
+      margin-bottom: 0.5rem;
+    }
+
+    .logo-sub {
+      font-size: 0.75rem;
+      color: #999;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    .login-card input {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border: 1.5px solid #e5e0d8;
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .login-card input:focus { border-color: #b5895a; }
+
+    .btn-primary {
+      width: 100%;
+      padding: 0.9rem;
+      background: #b5895a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover { background: #9e7448; }
+    .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+
+    .error-msg {
+      color: #c0392b;
+      font-size: 0.85rem;
+      margin-top: 0.75rem;
+    }
+
+    /* MAIN APP */
+    #app-screen { display: none; }
+
+    .topbar {
+      background: white;
+      border-bottom: 1px solid #e5e0d8;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .topbar .logo { margin: 0; }
+
+    .btn-logout {
+      background: none;
+      border: 1px solid #e5e0d8;
+      border-radius: 6px;
+      padding: 0.4rem 0.9rem;
+      font-size: 0.8rem;
+      color: #888;
+      cursor: pointer;
+    }
+
+    .btn-logout:hover { border-color: #999; color: #555; }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+    }
+
+    /* UPLOAD ZONE */
+    #upload-section { text-align: center; }
+
+    .upload-zone {
+      border: 2px dashed #d4c8b8;
+      border-radius: 16px;
+      padding: 4rem 2rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: white;
+    }
+
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: #b5895a;
+      background: #fdf9f5;
+    }
+
+    .upload-icon { font-size: 3rem; margin-bottom: 1rem; }
+
+    .upload-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    .upload-sub { color: #888; font-size: 0.9rem; }
+
+    .upload-btn {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 0.75rem 2rem;
+      background: #b5895a;
+      color: white;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .upload-btn:hover { background: #9e7448; }
+
+    /* LOADING */
+    #loading-section {
+      display: none;
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid #e5e0d8;
+      border-top-color: #b5895a;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1.5rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text { color: #888; font-size: 1rem; }
+
+    /* REVIEW */
+    #review-section { display: none; }
+
+    .review-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .vendor-name {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    .invoice-meta {
+      font-size: 0.85rem;
+      color: #888;
+      margin-top: 0.25rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .badge-unpaid {
+      background: #fff3cd;
+      color: #856404;
+      border: 1.5px solid #ffc107;
+    }
+
+    .badge-paid {
+      background: #d4edda;
+      color: #155724;
+      border: 1.5px solid #28a745;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    }
+
+    .card-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #b5895a;
+      margin-bottom: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead th {
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #f0ebe3;
+    }
+
+    tbody td {
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f7f4f0;
+      font-size: 0.9rem;
+      vertical-align: top;
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+
+    .sku { color: #999; font-size: 0.8rem; }
+    .desc { font-weight: 500; }
+    .size-color { color: #888; font-size: 0.8rem; margin-top: 0.2rem; }
+
+    .totals-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.4rem 0;
+      font-size: 0.9rem;
+    }
+
+    .totals-row.grand-total {
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-top: 1px solid #e5e0d8;
+      margin-top: 0.5rem;
+      padding-top: 0.75rem;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-secondary {
+      padding: 0.85rem 1.5rem;
+      background: white;
+      color: #555;
+      border: 1.5px solid #e5e0d8;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover { border-color: #b5895a; color: #b5895a; }
+
+    .btn-shopify {
+      flex: 1;
+      padding: 0.95rem 2rem;
+      background: #1a1a2e;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-shopify:hover { background: #2d2d4a; }
+    .btn-shopify:disabled { background: #ccc; cursor: not-allowed; }
+
+    /* SUCCESS */
+    #success-section {
+      display: none;
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+
+    .success-icon { font-size: 4rem; margin-bottom: 1rem; }
+    .success-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .success-sub { color: #888; margin-bottom: 2rem; }
+
+    .btn-another {
+      display: inline-block;
+      padding: 0.85rem 2rem;
+      background: #b5895a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    #file-input { display: none; }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #c0392b;
+      color: white;
+      padding: 0.85rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      z-index: 999;
+      display: none;
+      max-width: 90vw;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="logo">Betty's Divine</div>
+    <div class="logo-sub">Purchase Order Tool</div>
+    <input type="password" id="password-input" placeholder="Enter password" />
+    <button class="btn-primary" id="login-btn">Sign In</button>
+    <div class="error-msg" id="login-error"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app-screen">
+  <div class="topbar">
+    <div>
+      <div class="logo">Betty's Divine</div>
+    </div>
+    <button class="btn-logout" id="logout-btn">Sign Out</button>
+  </div>
+
+  <div class="container">
+
+    <!-- UPLOAD -->
+    <div id="upload-section">
+      <div class="upload-zone" id="drop-zone">
+        <div class="upload-icon">📄</div>
+        <div class="upload-title">Drop a vendor invoice here</div>
+        <div class="upload-sub">PDF, JPG, or PNG • From email attachments or scans</div>
+        <label class="upload-btn" for="file-input">Choose File</label>
+      </div>
+      <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png" />
+    </div>
+
+    <!-- LOADING -->
+    <div id="loading-section">
+      <div class="spinner"></div>
+      <div class="loading-text">Reading your invoice…</div>
+    </div>
+
+    <!-- REVIEW -->
+    <div id="review-section">
+      <div class="review-header">
+        <div>
+          <div class="vendor-name" id="rv-vendor"></div>
+          <div class="invoice-meta" id="rv-meta"></div>
+        </div>
+        <div class="badge" id="paid-badge" onclick="togglePaid()">
+          <span id="badge-icon">⏳</span>
+          <span id="badge-text">UNPAID</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Line Items</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th style="text-align:right">Qty</th>
+              <th style="text-align:right">Unit Cost</th>
+              <th style="text-align:right">Total</th>
+            </tr>
+          </thead>
+          <tbody id="rv-items"></tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Totals</div>
+        <div class="totals-row"><span>Subtotal</span><span id="rv-subtotal"></span></div>
+        <div class="totals-row"><span>Freight</span><span id="rv-shipping"></span></div>
+        <div class="totals-row grand-total"><span>Invoice Total</span><span id="rv-total"></span></div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-secondary" onclick="resetApp()">↩ Upload Another</button>
+        <button class="btn-shopify" id="push-btn" onclick="pushToShopify()">
+          ✦ Push to Shopify
+        </button>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div id="success-section">
+      <div class="success-icon">✅</div>
+      <div class="success-title">Purchase Order Created!</div>
+      <div class="success-sub" id="success-detail">It's in Shopify — go receive it when the shipment arrives.</div>
+      <button class="btn-another" onclick="resetApp()">Upload Another Invoice</button>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // --- CONFIG ---
+  // In production, this points to your Railway backend URL
+  // During local testing, use http://localhost:5000
+  const API_BASE = window.location.hostname === 'localhost'
+    ? 'http://localhost:5000'
+    : ''; // same origin in production
+
+  let currentInvoice = null;
+  let isPaid = false;
+
+  // --- AUTH ---
+  document.getElementById('password-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') login();
+  });
+
+  document.getElementById('login-btn').addEventListener('click', login);
+
+  async function login() {
+    const pw = document.getElementById('password-input').value;
+    const btn = document.getElementById('login-btn');
+    btn.disabled = true;
+    btn.textContent = 'Signing in…';
+
+    try {
+      const res = await fetch(`${API_BASE}/api/login`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw })
+      });
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app-screen').style.display = 'block';
+      } else {
+        document.getElementById('login-error').textContent = 'Wrong password — try again.';
+      }
+    } catch (e) {
+      document.getElementById('login-error').textContent = 'Cannot reach server. Is it running?';
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Sign In';
+  }
+
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    await fetch(`${API_BASE}/api/logout`, { method: 'POST', credentials: 'include' });
+    location.reload();
+  });
+
+  // --- FILE UPLOAD ---
+  const dropZone = document.getElementById('drop-zone');
+  const fileInput = document.getElementById('file-input');
+
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) processFile(file);
+  });
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) processFile(fileInput.files[0]);
+  });
+
+  async function processFile(file) {
+    show('loading-section');
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch(`${API_BASE}/api/parse-invoice`, {
+        method: 'POST',
+        credentials: 'include',
+        body: formData
+      });
+
+      if (!res.ok) throw new Error('Parse failed');
+      const invoice = await res.json();
+      currentInvoice = invoice;
+      isPaid = invoice.already_paid || false;
+      renderReview(invoice);
+      show('review-section');
+    } catch (e) {
+      show('upload-section');
+      showToast('Could not read that invoice — try a clearer PDF or photo.');
+    }
+  }
+
+  // --- REVIEW ---
+  function renderReview(inv) {
+    document.getElementById('rv-vendor').textContent = inv.vendor || 'Unknown Vendor';
+
+    let meta = [];
+    if (inv.invoice_number) meta.push(`Invoice #${inv.invoice_number}`);
+    if (inv.invoice_date) meta.push(`Dated ${inv.invoice_date}`);
+    if (inv.due_date) meta.push(`Due ${inv.due_date}`);
+    if (inv.payment_terms) meta.push(inv.payment_terms);
+    document.getElementById('rv-meta').textContent = meta.join(' · ');
+
+    updateBadge();
+
+    const tbody = document.getElementById('rv-items');
+    tbody.innerHTML = '';
+    (inv.line_items || []).forEach(item => {
+      const tr = document.createElement('tr');
+      const details = [item.color, item.size].filter(Boolean).join(' · ');
+      tr.innerHTML = `
+        <td>
+          <div class="sku">${item.sku || ''}</div>
+          <div class="desc">${item.description || ''}</div>
+          ${details ? `<div class="size-color">${details}</div>` : ''}
+        </td>
+        <td style="text-align:right">${item.quantity}</td>
+        <td style="text-align:right">$${(item.unit_cost||0).toFixed(2)}</td>
+        <td style="text-align:right">$${(item.total_cost||0).toFixed(2)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('rv-subtotal').textContent = `$${(inv.subtotal||0).toFixed(2)}`;
+    document.getElementById('rv-shipping').textContent = `$${(inv.shipping||0).toFixed(2)}`;
+    document.getElementById('rv-total').textContent = `$${(inv.total||0).toFixed(2)}`;
+  }
+
+  function togglePaid() {
+    isPaid = !isPaid;
+    if (currentInvoice) currentInvoice.already_paid = isPaid;
+    updateBadge();
+  }
+
+  function updateBadge() {
+    const badge = document.getElementById('paid-badge');
+    if (isPaid) {
+      badge.className = 'badge badge-paid';
+      document.getElementById('badge-icon').textContent = '✓';
+      document.getElementById('badge-text').textContent = 'PAID';
+    } else {
+      badge.className = 'badge badge-unpaid';
+      document.getElementById('badge-icon').textContent = '⏳';
+      document.getElementById('badge-text').textContent = 'UNPAID';
+    }
+  }
+
+  // --- PUSH TO SHOPIFY ---
+  async function pushToShopify() {
+    const btn = document.getElementById('push-btn');
+    btn.disabled = true;
+    btn.textContent = 'Sending to Shopify…';
+
+    try {
+      const res = await fetch(`${API_BASE}/api/push-to-shopify`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ invoice: currentInvoice })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('success-detail').textContent =
+          `PO created in Shopify. Go receive it when the shipment arrives.`;
+        show('success-section');
+      } else {
+        showToast(`Shopify error: ${data.error}`);
+      }
+    } catch (e) {
+      showToast('Could not reach Shopify — check your connection.');
+    }
+
+    btn.disabled = false;
+    btn.textContent = '✦ Push to Shopify';
+  }
+
+  // --- HELPERS ---
+  function show(id) {
+    ['upload-section','loading-section','review-section','success-section'].forEach(s => {
+      document.getElementById(s).style.display = s === id ? 'block' : 'none';
+    });
+  }
+
+  function resetApp() {
+    currentInvoice = null;
+    isPaid = false;
+    document.getElementById('file-input').value = '';
+    show('upload-section');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 4000);
+  }
+</script>
+</body>
+</html>
