@@ -242,26 +242,20 @@ def push_to_shopify():
 
     po_payload["purchase_order"]["line_items"] = matched_items
 
-    response = requests.post(
+   response = requests.post(
         f"https://{SHOPIFY_STORE_URL}/api/2024-10/purchase_orders.json",
-        headers=headers,
+        headers={
+            "X-Shopify-Access-Token": SHOPIFY_ACCESS_TOKEN,
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
         json=po_payload
     )
 
     if response.status_code in [200, 201]:
-        po = response.json().get("purchase_order", {})
-        return jsonify({
-            "success": True,
-            "purchase_order_id": po.get("id"),
-            "message": f"Purchase order created in Shopify!"
-        })
+        return jsonify({"success": True, "message": "Purchase order created in Shopify!"})
     else:
-        # Return the error details so we can debug
-        return jsonify({
-            "success": False,
-            "error": f"Shopify API error: {response.status_code}",
-            "details": response.text
-        }), 400
+        return jsonify({"success": False, "error": f"Shopify API error {response.status_code}", "details": response.text}), 400
 
 @app.route("/health", methods=["GET"])
 def health():
