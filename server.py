@@ -243,7 +243,7 @@ def push_to_shopify():
     po_payload["purchase_order"]["line_items"] = matched_items
 
     response = requests.post(
-        f"https://{SHOPIFY_STORE_URL}/api/2024-01/purchase_orders.json",
+        f"https://{SHOPIFY_STORE_URL}/api/2024-10/purchase_orders.json",
         headers=headers,
         json=po_payload
     )
