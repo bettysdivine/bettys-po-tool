@@ -12,8 +12,8 @@ app.secret_key = os.environ.get("SECRET_KEY", "bettys-divine-secret-2026")
 CORS(app, supports_credentials=True)
 
 # Configuration - set these as environment variables in Railway
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "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")
-SHOPIFY_ACCESS_TOKEN = os.environ.get("SHOPIFY_ACCESS_TOKEN", "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")
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
+SHOPIFY_ACCESS_TOKEN = os.environ.get("SHOPIFY_ACCESS_TOKEN", "")
 SHOPIFY_STORE_URL = os.environ.get("SHOPIFY_STORE_URL", "bettys-divine.myshopify.com")
 APP_PASSWORD = os.environ.get("APP_PASSWORD", "Bettys1300!")
 
